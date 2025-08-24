@@ -1,4 +1,4 @@
-name: Deploy HRMS Application 
+name: Deploy hrms Application 
 
 on:
   push:
@@ -19,21 +19,21 @@ jobs:
       - name: Build Docker image with build args
         run: |
           docker build \
-            -t phoenix5911/HRMS-app:latest \
+            -t phoenix5911/hrms-app:latest \
             --build-arg REACT_APP_NODE_ENV=production \
             --build-arg REACT_APP_SERVER_BASE_URL=${{ secrets.REACT_APP_SERVER_BASE_URL }} .
 
       - name: Push Docker image
-        run: docker push phoenix5911/HRMS-app:latest
+        run: docker push phoenix5911/hrms-app:latest
 
       - name: Pull image from Docker Hub
-        run: docker pull phoenix5911/HRMS-app:latest
+        run: docker pull phoenix5911/hrms-app:latest
 
       - name: Delete old container if exists
-        run: docker rm -f HRMS-app-container || true
+        run: docker rm -f hrms-app-container || true
 
       - name: Run Docker Container
-        run: docker run -d -p 8080:80 --name HRMS-app-container phoenix5911/HRMS-app:latest
+        run: docker run -d -p 8080:80 --name hrms-app-container phoenix5911/hrms-app:latest
 
       - name: Verify container is running
         run: docker ps
