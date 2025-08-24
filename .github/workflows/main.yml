@@ -19,10 +19,11 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           docker build \
-            -t phoenix5911/HRMS-app latest \
+            -t phoenix5911/HRMS-app:latest \
             --build-arg REACT_APP_NODE_ENV=production \
             --build-arg REACT_APP_SERVER_BASE_URL=${{ secrets.REACT_APP_SERVER_BASE_URL }} .
           docker push phoenix5911/HRMS-app:latest
+
   deploy:
     needs: build
     runs-on: self-hosted  # Your EC2 runner
