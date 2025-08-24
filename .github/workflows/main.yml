@@ -1,4 +1,4 @@
-name: Deploy HRMS app
+name: Deploy HRMS Application 
 
 on:
   push:
@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-and-deploy:
+    runs-on: self-hosted  # Make sure your EC2 runner is active
 
     steps:
       - name: Checkout Source
@@ -16,24 +16,24 @@ jobs:
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASS }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Build and Push Docker Image
+      - name: Build Docker image with build args
         run: |
           docker build \
             -t phoenix5911/HRMS-app:latest \
             --build-arg REACT_APP_NODE_ENV=production \
             --build-arg REACT_APP_SERVER_BASE_URL=${{ secrets.REACT_APP_SERVER_BASE_URL }} .
-          docker push phoenix5911/HRMS-app:latest
 
-  deploy:
-    needs: build
-    runs-on: self-hosted  # Your EC2 runner
+      - name: Push Docker image
+        run: docker push phoenix5911/HRMS-app:latest
 
-    steps:
       - name: Pull image from Docker Hub
         run: docker pull phoenix5911/HRMS-app:latest
 
-      - name: Delete old container
+      - name: Delete old container if exists
         run: docker rm -f HRMS-app-container || true
 
       - name: Run Docker Container
         run: docker run -d -p 8080:80 --name HRMS-app-container phoenix5911/HRMS-app:latest
+
+      - name: Verify container is running
+        run: docker ps
