@@ -16,13 +16,14 @@ jobs:
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASS }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Build Docker image with build args
+      - name: Build Docker image with build args 
+        env:
+           REACT_APP_SERVER_BASE_URL: ${{ secrets.REACT_APP_SERVER_BASE_URL }}
         run: |
-          docker build \
-            -t phoenix5911/hrms-app:latest \
-            --build-arg REACT_APP_NODE_ENV=production \
-            --build-arg REACT_APP_SERVER_BASE_URL=${{ secrets.REACT_APP_SERVER_BASE_URL }} .
-
+         docker build \
+         -t phoenix5911/hrms-app:latest \
+         --build-arg REACT_APP_NODE_ENV=production \
+         --build-arg REACT_APP_SERVER_BASE_URL=$REACT_APP_SERVER_BASE_URL .
       - name: Push Docker image
         run: docker push phoenix5911/hrms-app:latest
 
